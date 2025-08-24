@@ -76,14 +76,7 @@ public class ProjectFileService : IDynamicApiController, ITransient
         var suffix = Path.GetExtension(input.File.FileName).ToLower(); // 后缀
         if (string.IsNullOrWhiteSpace(suffix))
             suffix = string.Concat(".", input.File.ContentType.AsSpan(input.File.ContentType.LastIndexOf('/') + 1));
-        if (!string.IsNullOrWhiteSpace(suffix))
-        {
-            //var contentTypeProvider = FS.GetFileExtensionContentTypeProvider();
-            //suffix = contentTypeProvider.Mappings.FirstOrDefault(u => u.Value == file.ContentType).Key;
-            // 修改 image/jpeg 类型返回的 .jpeg、jpe 后缀
-            if (suffix == ".jpeg" || suffix == ".jpe")
-                suffix = ".jpg";
-        }
+        
         if (string.IsNullOrWhiteSpace(suffix)) throw Oops.Oh(ErrorCodeEnum.D8003);
 
         // 防止客户端伪造文件类型

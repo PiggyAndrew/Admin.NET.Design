@@ -73,7 +73,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Service\ProjectFile\新文件夹\" />
     <Folder Include="Service\新文件夹\" />
   </ItemGroup>
 
