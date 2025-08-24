@@ -10,7 +10,7 @@
 		</el-main>
 	</div>
 	<div v-else>
-		<widgets></widgets>
+		<messages></messages>
 	</div>
 </template>
 
@@ -18,7 +18,7 @@
 import { defineAsyncComponent, onMounted, reactive } from 'vue';
 // import { useHomepage } from 'src/stores/homepage';
 
-const widgets = defineAsyncComponent(() => import('./widgets/index.vue'));
+const messages = defineAsyncComponent(() => import('./messages/index.vue'));
 // const homepageStore = useHomepage();
 
 const state = reactive({

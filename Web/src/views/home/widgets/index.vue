@@ -1,13 +1,13 @@
 <template>
 	<div style="height: 100vh; overflow: hidden">
 		<div class="noticebar" style="display: flex">
-			<NoticeBar />
-			<div class="editlayout">
+			<!-- <NoticeBar /> -->
+			<!-- <div class="editlayout">
 				<el-tooltip content="编辑/保存布局" placement="bottom">
 					<el-button v-if="customizing" type="warning" icon="ele-Check" circle plain @click="save"></el-button>
 					<el-button v-else type="warning" icon="ele-Edit" circle plain @click="custom"></el-button>
 				</el-tooltip>
-			</div>
+			</div> -->
 		</div>
 
 		<div :class="['widgets-home', customizing ? 'customizing' : '']" ref="main">
@@ -151,8 +151,8 @@ interface Grid {
 const defaultGrid = {
 	layout: [12, 6, 6],
 	copmsList: [
-		['welcome', 'myapp', 'commit'],
-		['about', 'version'],
+		[ 'myapp'],
+		['about'],
 		['timer', 'schedule'],
 	],
 };
@@ -188,7 +188,7 @@ const availableCompsList = computed(() => {
 });
 
 const myCompsList = computed(() => {
-	const myGrid = Local.get('DASHBOARDGRID') || ['welcome', 'myapp', 'version', 'timer', 'echarts', 'about', 'commit', 'schedule'];
+	const myGrid = Local.get('DASHBOARDGRID') || [ 'myapp', 'timer', 'echarts', 'about',  'schedule'];
 	return availableCompsList.value.filter((comp) => !comp.disabled && myGrid.includes(comp.key));
 });
 
