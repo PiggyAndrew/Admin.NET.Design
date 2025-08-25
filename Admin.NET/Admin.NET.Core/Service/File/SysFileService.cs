@@ -16,6 +16,7 @@ public class SysFileService : IDynamicApiController, ITransient
 {
     private readonly UserManager _userManager;
     private readonly SqlSugarRepository<SysFile> _sysFileRep;
+    private readonly SysFileCategoryService _sysFileCategoryService;
     private readonly OSSProviderOptions _OSSProviderOptions;
     private readonly UploadOptions _uploadOptions;
     private readonly string _imageType = ".jpeg.jpg.png.bmp.gif.tif";
@@ -24,12 +25,14 @@ public class SysFileService : IDynamicApiController, ITransient
 
     public SysFileService(UserManager userManager,
         SqlSugarRepository<SysFile> sysFileRep,
+        SysFileCategoryService sysFileCategoryService,
         IOptions<OSSProviderOptions> oSSProviderOptions,
         IOptions<UploadOptions> uploadOptions, INamedServiceProvider<ICustomFileProvider> namedServiceProvider)
     {
         _namedServiceProvider = namedServiceProvider;
         _userManager = userManager;
         _sysFileRep = sysFileRep;
+        _sysFileCategoryService = sysFileCategoryService;
         _OSSProviderOptions = oSSProviderOptions.Value;
         _uploadOptions = uploadOptions.Value;
         if (_OSSProviderOptions.Enabled)
@@ -290,10 +293,24 @@ public class SysFileService : IDynamicApiController, ITransient
         newFile.FileMd5 = fileMd5;
 
         var finalName = newFile.Id + suffix; // 文件最终名称
-
+       
         newFile = await _customFileProvider.UploadFileAsync(input.File, newFile, path, finalName);
         await _sysFileRep.AsInsertable(newFile).ExecuteCommandAsync();
+
+        input.Id = newFile.Id;
+        await UpdateFileCategory(input);
         return newFile;
+    }
+
+
+    /// <summary>
+    /// 更新文件类别
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    private async Task UpdateFileCategory(UploadFileInput input)
+    {
+        await _sysFileCategoryService.UpdateFileCategory(input.Id, input.Categories);
     }
 
     /// <summary>

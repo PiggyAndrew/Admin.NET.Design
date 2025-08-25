@@ -50,6 +50,8 @@ public class DeleteFileInput : BaseIdInput
 /// </summary>
 public class UploadFileInput
 {
+
+public  long Id { get; set; }
     /// <summary>
     /// 文件
     /// </summary>
@@ -80,6 +82,8 @@ public class UploadFileInput
     /// 允许格式：.jpeg.jpg.png.bmp.gif.tif
     /// </summary>
     public string AllowSuffix { get; set; }
+
+    public List<SysFileCategory> Categories { get; set; }
 }
 
 /// <summary>

@@ -72,8 +72,4 @@
 	<PackageReference Include="Microsoft.PowerShell.SDK" Version="7.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Service\新文件夹\" />
-  </ItemGroup>
-
 </Project>

@@ -108,4 +108,13 @@ public partial class SysFile : EntityBaseTenantOrg
     /// </summary>
     [SugarColumn(ColumnDescription = "是否公开")]
     public bool IsPublic { get; set; } = false;
+
+
+
+    /// <summary>
+    /// 文件版本
+    /// </summary>
+    [SugarColumn(ColumnDescription = "文件版本")]
+    [MaxLength(128)]
+    public string VersionNumber { get; set; } = "1.0.0";
 }
