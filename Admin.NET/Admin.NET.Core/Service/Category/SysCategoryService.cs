@@ -13,22 +13,32 @@ namespace Admin.NET.Core.Service;
 public class SysCategoryService : IDynamicApiController, ITransient
 {
     private readonly SqlSugarRepository<SysCategory> _sysCategoryRep;
+    private readonly UserManager _userManager;
+    private readonly SysCacheService _sysCacheService;
+    private readonly SysFileCategoryService _sysFileCategoryService;
 
     public SysCategoryService(
-        SqlSugarRepository<SysCategory> sysOrgRep)
+        SqlSugarRepository<SysCategory> sysOrgRep,
+        UserManager userManager,
+         SysCacheService sysCacheService,
+        SysFileCategoryService sysFileCategoryService
+        )
     {
         _sysCategoryRep = sysOrgRep;
+        _userManager = userManager;
+        _sysCacheService = sysCacheService;
+        _sysFileCategoryService = sysFileCategoryService;
     }
 
     /// <summary>
     /// 获取列表 🔖
     /// </summary>
     /// <returns></returns>
-    [DisplayName("获取机构列表")]
-    public async Task<List<SysOrg>> GetList([FromQuery] OrgInput input)
+    [DisplayName("获取资源类型列表")]
+    public async Task<List<SysCategory>> GetList([FromQuery] CategoryInput input)
     {
         // 获取拥有的机构Id集合
-        var userOrgIdList = await GetUserOrgIdList();
+        var fileCategoryIdList = await GetFileCategoryIdList();
 
         var queryable = _sysCategoryRep.AsQueryable()
             .WhereIF(_userManager.SuperAdmin && input.TenantId > 0, u => u.TenantId == input.TenantId)
@@ -37,31 +47,31 @@ public class SysCategoryService : IDynamicApiController, ITransient
         // 带条件筛选时返回列表数据
         if (!string.IsNullOrWhiteSpace(input.Name) || !string.IsNullOrWhiteSpace(input.Code) || !string.IsNullOrWhiteSpace(input.Type))
         {
-            return await queryable.WhereIF(userOrgIdList.Count > 0, u => userOrgIdList.Contains(u.Id))
+            return await queryable.WhereIF(fileCategoryIdList.Count > 0, u => fileCategoryIdList.Contains(u.Id))
                 .WhereIF(!string.IsNullOrWhiteSpace(input.Name), u => u.Name.Contains(input.Name))
                 .WhereIF(!string.IsNullOrWhiteSpace(input.Code), u => u.Code == input.Code)
                 .WhereIF(!string.IsNullOrWhiteSpace(input.Type), u => u.Type == input.Type)
                 .ToListAsync();
         }
 
-        List<SysOrg> orgTree;
+        List<SysCategory> categoryTree;
         if (_userManager.SuperAdmin)
         {
-            orgTree = await queryable.ToTreeAsync(u => u.Children, u => u.Pid, input.Id);
+            categoryTree = await queryable.ToTreeAsync(u => u.Children, u => u.Pid, input.Id);
         }
         else
         {
-            orgTree = await queryable.ToTreeAsync(u => u.Children, u => u.Pid, input.Id, userOrgIdList.Select(d => (object)d).ToArray());
+            categoryTree = await queryable.ToTreeAsync(u => u.Children, u => u.Pid, input.Id, fileCategoryIdList.Select(d => (object)d).ToArray());
             // 递归禁用没权限的机构（防止用户修改或创建无权的机构和用户）
-            HandlerOrgTree(orgTree, userOrgIdList);
+            HandlerCategoryTree(categoryTree, fileCategoryIdList);
         }
 
-        var sysOrg = await _sysCategoryRep.GetSingleAsync(u => u.Id == input.Id);
-        if (sysOrg == null) return orgTree;
+        var sysCategory = await _sysCategoryRep.GetSingleAsync(u => u.Id == input.Id);
+        if (sysCategory == null) return categoryTree;
 
-        sysOrg.Children = orgTree;
-        orgTree = new List<SysOrg> { sysOrg };
-        return orgTree;
+        sysCategory.Children = categoryTree;
+        categoryTree = new List<SysCategory> { sysCategory };
+        return categoryTree;
     }
 
     /// <summary>
@@ -69,39 +79,39 @@ public class SysCategoryService : IDynamicApiController, ITransient
     /// </summary>
     /// <param name="orgTree"></param>
     /// <param name="userOrgIdList"></param>
-    private static void HandlerOrgTree(List<SysOrg> orgTree, List<long> userOrgIdList)
+    private static void HandlerCategoryTree(List<SysCategory> orgTree, List<long> userOrgIdList)
     {
         foreach (var org in orgTree)
         {
             org.Disabled = !userOrgIdList.Contains(org.Id); // 设置禁用/不可选择
             if (org.Children != null)
-                HandlerOrgTree(org.Children, userOrgIdList);
+                HandlerCategoryTree(org.Children, userOrgIdList);
         }
     }
 
     /// <summary>
-    /// 增加机构 🔖
+    /// 增加资源类型 🔖
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
     [ApiDescriptionSettings(Name = "Add"), HttpPost]
-    [DisplayName("增加机构")]
-    public async Task<long> AddOrg(AddOrgInput input)
+    [DisplayName("增加资源类型")]
+    public async Task<long> AddCategory(AddCategoryInput input)
     {
-        if (!_userManager.SuperAdmin && input.Pid == 0)
-            throw Oops.Oh(ErrorCodeEnum.D2009);
+        //if (!_userManager.SuperAdmin && input.Pid == 0)
+        //    throw Oops.Oh(ErrorCodeEnum.D2009);
 
         if (await _sysCategoryRep.IsAnyAsync(u => u.Name == input.Name && u.Code == input.Code))
             throw Oops.Oh(ErrorCodeEnum.D2002);
 
-        if (!_userManager.SuperAdmin && input.Pid != 0)
-        {
-            // 新增机构父Id不是0，则进行权限校验
-            var orgIdList = await GetUserOrgIdList();
-            // 新增机构的父机构不在自己的数据范围内
-            if (orgIdList.Count < 1 || !orgIdList.Contains(input.Pid))
-                throw Oops.Oh(ErrorCodeEnum.D2003);
-        }
+        //if (!_userManager.SuperAdmin && input.Pid != 0)
+        //{
+        //    // 新增机构父Id不是0，则进行权限校验
+        //    var CategoryIds = await GetFileCategoryIdList();
+        //    // 新增机构的父机构不在自己的数据范围内
+        //    if (CategoryIds.Count < 1 || !CategoryIds.Contains(input.Pid))
+        //        throw Oops.Oh(ErrorCodeEnum.D2003);
+        //}
 
         // 删除与此父机构有关的用户机构缓存
         if (input.Pid == 0)
@@ -115,32 +125,32 @@ public class SysCategoryService : IDynamicApiController, ITransient
                 DeleteAllUserOrgCache(pOrg.Id, pOrg.Pid);
         }
 
-        var newOrg = await _sysCategoryRep.AsInsertable(input.Adapt<SysOrg>()).ExecuteReturnEntityAsync();
-        return newOrg.Id;
+        var newCateogory = await _sysCategoryRep.AsInsertable(input.Adapt<SysCategory>()).ExecuteReturnEntityAsync();
+        return newCateogory.Id;
     }
 
     /// <summary>
-    /// 批量增加机构
+    /// 批量增加资源类型
     /// </summary>
     /// <param name="orgs"></param>
     /// <returns></returns>
     [NonAction]
-    public async Task BatchAddOrgs(List<SysOrg> orgs)
+    public async Task BatchAddOrgs(List<SysCategory> categories)
     {
         DeleteAllUserOrgCache(0, 0);
         await _sysCategoryRep.AsDeleteable().ExecuteCommandAsync();
-        await _sysCategoryRep.AsInsertable(orgs).ExecuteCommandAsync();
+        await _sysCategoryRep.AsInsertable(categories).ExecuteCommandAsync();
     }
 
     /// <summary>
-    /// 更新机构 🔖
+    /// 更新资源类型 🔖
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
     [UnitOfWork]
     [ApiDescriptionSettings(Name = "Update"), HttpPost]
-    [DisplayName("更新机构")]
-    public async Task UpdateOrg(UpdateOrgInput input)
+    [DisplayName("更新资源类型")]
+    public async Task UpdateCategory(UpdateOrgInput input)
     {
         if (!_userManager.SuperAdmin && input.Pid == 0)
             throw Oops.Oh(ErrorCodeEnum.D2012);
@@ -172,22 +182,22 @@ public class SysCategoryService : IDynamicApiController, ITransient
         // 是否有权限操作此机构
         if (!_userManager.SuperAdmin)
         {
-            var orgIdList = await GetUserOrgIdList();
+            var orgIdList = await GetFileCategoryIdList();
             if (orgIdList.Count < 1 || !orgIdList.Contains(input.Id))
                 throw Oops.Oh(ErrorCodeEnum.D2003);
         }
 
-        await _sysCategoryRep.AsUpdateable(input.Adapt<SysOrg>()).IgnoreColumns(true).ExecuteCommandAsync();
+        await _sysCategoryRep.AsUpdateable(input.Adapt<SysCategory>()).IgnoreColumns(true).ExecuteCommandAsync();
     }
 
     /// <summary>
-    /// 删除机构 🔖
+    /// 删除资源类型 🔖
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
     [UnitOfWork]
     [ApiDescriptionSettings(Name = "Delete"), HttpPost]
-    [DisplayName("删除机构")]
+    [DisplayName("删除资源类型")]
     public async Task DeleteOrg(DeleteOrgInput input)
     {
         var sysOrg = await _sysCategoryRep.GetFirstAsync(u => u.Id == input.Id) ?? throw Oops.Oh(ErrorCodeEnum.D1002);
@@ -195,7 +205,7 @@ public class SysCategoryService : IDynamicApiController, ITransient
         // 是否有权限操作此机构
         if (!_userManager.SuperAdmin)
         {
-            var orgIdList = await GetUserOrgIdList();
+            var orgIdList = await GetFileCategoryIdList();
             if (orgIdList.Count < 1 || !orgIdList.Contains(sysOrg.Id))
                 throw Oops.Oh(ErrorCodeEnum.D2003);
         }
@@ -213,7 +223,7 @@ public class SysCategoryService : IDynamicApiController, ITransient
             throw Oops.Oh(ErrorCodeEnum.D2004);
 
         // 若扩展机构有用户则禁止删除
-        var hasExtOrgEmp = await _sysUserExtOrgService.HasUserOrg(sysOrg.Id);
+        var hasExtOrgEmp = await _sysFileCategoryService.HasFileCategory(sysOrg.Id);
         if (hasExtOrgEmp)
             throw Oops.Oh(ErrorCodeEnum.D2005);
 
@@ -236,15 +246,12 @@ public class SysCategoryService : IDynamicApiController, ITransient
         // 级联删除机构子节点
         await _sysCategoryRep.DeleteAsync(u => childOrgIdList.Contains(u.Id));
 
-        // 级联删除角色机构数据
-        await _sysRoleOrgService.DeleteRoleOrgByOrgIdList(childOrgIdList);
-
         // 级联删除用户机构数据
-        await _sysUserExtOrgService.DeleteUserExtOrgByOrgIdList(childOrgIdList);
+        await _sysFileCategoryService.DeleteFileCategoryByCategoryIdList(childOrgIdList);
     }
 
     /// <summary>
-    /// 删除与此机构、父机构有关的用户机构缓存
+    /// 删除与此资源类型、父资源类型有关的用户资源类型缓存
     /// </summary>
     /// <param name="orgId"></param>
     /// <param name="orgPid"></param>
@@ -273,148 +280,33 @@ public class SysCategoryService : IDynamicApiController, ITransient
     /// </summary>
     /// <returns></returns>
     [NonAction]
-    public async Task<List<long>> GetUserOrgIdList()
+    public async Task<List<long>> GetFileCategoryIdList()
     {
         if (_userManager.SuperAdmin) return new();
-        return await GetUserOrgIdList(_userManager.UserId, _userManager.OrgId);
+        return await GetFileCategoryIdList(_userManager.UserId);
     }
 
     /// <summary>
-    /// 根据指定用户Id获取机构Id集合
+    /// 根据指定用户Id获取资源类型Id集合
     /// </summary>
     /// <returns></returns>
     [NonAction]
-    public async Task<List<long>> GetUserOrgIdList(long userId, long userOrgId)
+    public async Task<List<long>> GetFileCategoryIdList(long userId)
     {
-        var orgIdList = _sysCacheService.Get<List<long>>($"{CacheConst.KeyUserOrg}{userId}"); // 取缓存
-        if (orgIdList is { Count: >= 1 }) return orgIdList;
+        //var orgIdList = _sysCacheService.Get<List<long>>($"{CacheConst.KeyUserOrg}{userId}"); // 取缓存
+        //if (orgIdList is { Count: >= 1 }) return orgIdList;
 
         // 本人创建机构集合
         var orgList0 = await _sysCategoryRep.AsQueryable().Where(u => u.CreateUserId == userId).Select(u => u.Id).ToListAsync();
 
         // 扩展机构集合
-        var orgList1 = await _sysUserExtOrgService.GetUserExtOrgList(userId);
+        var orgList1 = await _sysFileCategoryService.GetFileCategoryList(userId);
 
-        // 角色机构集合
-        var orgList2 = await GetUserRoleOrgIdList(userId, userOrgId);
 
         // 机构并集
-        orgIdList = orgList1.Select(u => u.OrgId).Union(orgList2).Union(orgList0).ToList();
+        var orgIdList = orgList1.Select(u => u.CategoryId).Union(orgList0).ToList();
 
-        // 当前所属机构
-        if (!orgIdList.Contains(userOrgId)) orgIdList.Add(userOrgId);
-
-        _sysCacheService.Set($"{CacheConst.KeyUserOrg}{userId}", orgIdList, TimeSpan.FromDays(7)); // 存缓存
-        return orgIdList;
-    }
-
-    /// <summary>
-    /// 获取用户角色机构Id集合
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="userOrgId">用户的机构Id</param>
-    /// <returns></returns>
-    private async Task<List<long>> GetUserRoleOrgIdList(long userId, long userOrgId)
-    {
-        var roleList = await _sysUserRoleService.GetUserRoleList(userId);
-
-        if (roleList.Count < 1) return new(); // 空机构Id集合
-
-        return await GetUserOrgIdList(roleList, userId, userOrgId);
-    }
-
-    /// <summary>
-    /// 判定用户是否有某角色权限
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="role">角色代码</param>
-    /// <returns></returns>
-    [NonAction]
-    public async Task<bool> GetUserHasRole(long userId, SysRole role)
-    {
-        if (_userManager.SuperAdmin)
-            return true;
-        var userOrgId = _userManager.OrgId;
-        var roleList = await _sysUserRoleService.GetUserRoleList(userId);
-        if (roleList != null && roleList.Exists(r => r.Code == role.Code) == true)
-            return true;
-        roleList = new List<SysRole> { role };
-        var orgIds = await GetUserOrgIdList(roleList, userId, userOrgId);
-        return orgIds.Contains(userOrgId);
-    }
-
-    /// <summary>
-    /// 根据角色Id集合获取机构Id集合
-    /// </summary>
-    /// <param name="roleList"></param>
-    /// <param name="userId"></param>
-    /// <param name="userOrgId">用户的机构Id</param>
-    /// <returns></returns>
-    private async Task<List<long>> GetUserOrgIdList(List<SysRole> roleList, long userId, long userOrgId)
-    {
-        // 按最大范围策略设定(若同时拥有ALL和SELF权限，则结果ALL)
-        int strongerDataScopeType = (int)DataScopeEnum.Self;
-
-        // 自定义数据范围的角色集合
-        var customDataScopeRoleIdList = new List<long>();
-
-        // 数据范围的机构集合
-        var dataScopeOrgIdList = new List<long>();
-
-        if (roleList is { Count: > 0 })
-        {
-            roleList.ForEach(u =>
-            {
-                if (u.DataScope == DataScopeEnum.Define)
-                {
-                    customDataScopeRoleIdList.Add(u.Id);
-                    strongerDataScopeType = (int)u.DataScope; // 自定义数据权限时也要更新最大范围
-                }
-                else if ((int)u.DataScope <= strongerDataScopeType)
-                {
-                    strongerDataScopeType = (int)u.DataScope;
-                    // 根据数据范围获取机构集合
-                    var orgIds = GetOrgIdListByDataScope(userOrgId, strongerDataScopeType).GetAwaiter().GetResult();
-                    dataScopeOrgIdList = dataScopeOrgIdList.Union(orgIds).ToList();
-                }
-            });
-        }
-
-        // 缓存当前用户最大角色数据范围
-        _sysCacheService.Set(CacheConst.KeyRoleMaxDataScope + userId, strongerDataScopeType, TimeSpan.FromDays(7));
-
-        // 根据角色集合获取机构集合
-        var roleOrgIdList = await _sysRoleOrgService.GetRoleOrgIdList(customDataScopeRoleIdList);
-
-        // 并集机构集合
-        return roleOrgIdList.Union(dataScopeOrgIdList).ToList();
-    }
-
-    /// <summary>
-    /// 根据数据范围获取机构Id集合
-    /// </summary>
-    /// <param name="userOrgId">用户的机构Id</param>
-    /// <param name="dataScope"></param>
-    /// <returns></returns>
-    private async Task<List<long>> GetOrgIdListByDataScope(long userOrgId, int dataScope)
-    {
-        var orgId = userOrgId;//var orgId = _userManager.OrgId;
-        var orgIdList = new List<long>();
-        switch (dataScope)
-        {
-            // 若数据范围是全部，则获取所有机构Id集合
-            case (int)DataScopeEnum.All:
-                orgIdList = await _sysCategoryRep.AsQueryable().Select(u => u.Id).ToListAsync();
-                break;
-            // 若数据范围是本部门及以下，则获取本节点和子节点集合
-            case (int)DataScopeEnum.DeptChild:
-                orgIdList = await GetChildIdListWithSelfById(orgId);
-                break;
-            // 若数据范围是本部门不含子节点，则直接返回本部门
-            case (int)DataScopeEnum.Dept:
-                orgIdList.Add(orgId);
-                break;
-        }
+        //_sysCacheService.Set($"{CacheConst.KeyUserOrg}{userId}", orgIdList, TimeSpan.FromDays(7)); // 存缓存
         return orgIdList;
     }
 

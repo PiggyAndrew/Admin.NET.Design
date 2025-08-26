@@ -23,7 +23,7 @@ public class SysFileCategoryService : ITransient
     /// </summary>
     /// <param name="fileId"></param>
     /// <returns></returns>
-    public async Task<List<SysFileCategory>> GetUserExtOrgList(long fileId)
+    public async Task<List<SysFileCategory>> GetFileCategoryList(long fileId)
     {
         return await _sysFileCategoryRep.GetListAsync(u => u.FileId == fileId);
     }

@@ -51,7 +51,7 @@ public class DeleteFileInput : BaseIdInput
 public class UploadFileInput
 {
 
-public  long Id { get; set; }
+    public long Id { get; set; }
     /// <summary>
     /// 文件
     /// </summary>
