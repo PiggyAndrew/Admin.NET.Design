@@ -17,26 +17,26 @@ import { Configuration } from '../configuration';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
-import { AddCategoryInput } from '../models';
+import { AddOrgInput } from '../models';
 import { AdminResultInt64 } from '../models';
-import { AdminResultListSysCategory } from '../models';
-import { DeleteCategoryInput } from '../models';
-import { UpdateCategoryInput } from '../models';
+import { AdminResultListSysOrg } from '../models';
+import { DeleteOrgInput } from '../models';
+import { UpdateOrgInput } from '../models';
 /**
- * SysCategoryApi - axios parameter creator
+ * SysOrgApi - axios parameter creator
  * @export
  */
-export const SysCategoryApiAxiosParamCreator = function (configuration?: Configuration) {
+export const SysOrgApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary 增加分类 🔖
-         * @param {AddCategoryInput} [body] 
+         * @summary 增加机构 🔖
+         * @param {AddOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSysCategoryAddPost: async (body?: AddCategoryInput, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/sysCategory/add`;
+        apiSysOrgAddPost: async (body?: AddOrgInput, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/sysOrg/add`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -78,13 +78,13 @@ export const SysCategoryApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
-         * @summary 删除分类 🔖
-         * @param {DeleteCategoryInput} [body] 
+         * @summary 删除机构 🔖
+         * @param {DeleteOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSysCategoryDeletePost: async (body?: DeleteCategoryInput, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/sysCategory/delete`;
+        apiSysOrgDeletePost: async (body?: DeleteOrgInput, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/sysOrg/delete`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -126,21 +126,21 @@ export const SysCategoryApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
-         * @summary 获取分类列表 🔖
+         * @summary 获取机构列表 🔖
          * @param {number} id 主键Id
          * @param {string} [name] 名称
          * @param {string} [code] 编码
-         * @param {string} [type] 分类类型
+         * @param {string} [type] 机构类型
          * @param {number} [tenantId] 租户Id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSysCategoryListGet: async (id: number, name?: string, code?: string, type?: string, tenantId?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiSysOrgListGet: async (id: number, name?: string, code?: string, type?: string, tenantId?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling apiSysCategoryListGet.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling apiSysOrgListGet.');
             }
-            const localVarPath = `/api/sysCategory/list`;
+            const localVarPath = `/api/sysOrg/list`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -198,13 +198,13 @@ export const SysCategoryApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
-         * @summary 更新分类 🔖
-         * @param {UpdateCategoryInput} [body] 
+         * @summary 更新机构 🔖
+         * @param {UpdateOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSysCategoryUpdatePost: async (body?: UpdateCategoryInput, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/sysCategory/update`;
+        apiSysOrgUpdatePost: async (body?: UpdateOrgInput, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/sysOrg/update`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -248,20 +248,20 @@ export const SysCategoryApiAxiosParamCreator = function (configuration?: Configu
 };
 
 /**
- * SysCategoryApi - functional programming interface
+ * SysOrgApi - functional programming interface
  * @export
  */
-export const SysCategoryApiFp = function(configuration?: Configuration) {
+export const SysOrgApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary 增加分类 🔖
-         * @param {AddCategoryInput} [body] 
+         * @summary 增加机构 🔖
+         * @param {AddOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSysCategoryAddPost(body?: AddCategoryInput, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<AdminResultInt64>>> {
-            const localVarAxiosArgs = await SysCategoryApiAxiosParamCreator(configuration).apiSysCategoryAddPost(body, options);
+        async apiSysOrgAddPost(body?: AddOrgInput, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<AdminResultInt64>>> {
+            const localVarAxiosArgs = await SysOrgApiAxiosParamCreator(configuration).apiSysOrgAddPost(body, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -269,13 +269,13 @@ export const SysCategoryApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary 删除分类 🔖
-         * @param {DeleteCategoryInput} [body] 
+         * @summary 删除机构 🔖
+         * @param {DeleteOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSysCategoryDeletePost(body?: DeleteCategoryInput, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
-            const localVarAxiosArgs = await SysCategoryApiAxiosParamCreator(configuration).apiSysCategoryDeletePost(body, options);
+        async apiSysOrgDeletePost(body?: DeleteOrgInput, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
+            const localVarAxiosArgs = await SysOrgApiAxiosParamCreator(configuration).apiSysOrgDeletePost(body, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -283,17 +283,17 @@ export const SysCategoryApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary 获取分类列表 🔖
+         * @summary 获取机构列表 🔖
          * @param {number} id 主键Id
          * @param {string} [name] 名称
          * @param {string} [code] 编码
-         * @param {string} [type] 分类类型
+         * @param {string} [type] 机构类型
          * @param {number} [tenantId] 租户Id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSysCategoryListGet(id: number, name?: string, code?: string, type?: string, tenantId?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<AdminResultListSysCategory>>> {
-            const localVarAxiosArgs = await SysCategoryApiAxiosParamCreator(configuration).apiSysCategoryListGet(id, name, code, type, tenantId, options);
+        async apiSysOrgListGet(id: number, name?: string, code?: string, type?: string, tenantId?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<AdminResultListSysOrg>>> {
+            const localVarAxiosArgs = await SysOrgApiAxiosParamCreator(configuration).apiSysOrgListGet(id, name, code, type, tenantId, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -301,13 +301,13 @@ export const SysCategoryApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary 更新分类 🔖
-         * @param {UpdateCategoryInput} [body] 
+         * @summary 更新机构 🔖
+         * @param {UpdateOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSysCategoryUpdatePost(body?: UpdateCategoryInput, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
-            const localVarAxiosArgs = await SysCategoryApiAxiosParamCreator(configuration).apiSysCategoryUpdatePost(body, options);
+        async apiSysOrgUpdatePost(body?: UpdateOrgInput, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
+            const localVarAxiosArgs = await SysOrgApiAxiosParamCreator(configuration).apiSysOrgUpdatePost(body, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -317,111 +317,111 @@ export const SysCategoryApiFp = function(configuration?: Configuration) {
 };
 
 /**
- * SysCategoryApi - factory interface
+ * SysOrgApi - factory interface
  * @export
  */
-export const SysCategoryApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const SysOrgApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     return {
         /**
          * 
-         * @summary 增加分类 🔖
-         * @param {AddCategoryInput} [body] 
+         * @summary 增加机构 🔖
+         * @param {AddOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSysCategoryAddPost(body?: AddCategoryInput, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultInt64>> {
-            return SysCategoryApiFp(configuration).apiSysCategoryAddPost(body, options).then((request) => request(axios, basePath));
+        async apiSysOrgAddPost(body?: AddOrgInput, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultInt64>> {
+            return SysOrgApiFp(configuration).apiSysOrgAddPost(body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary 删除分类 🔖
-         * @param {DeleteCategoryInput} [body] 
+         * @summary 删除机构 🔖
+         * @param {DeleteOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSysCategoryDeletePost(body?: DeleteCategoryInput, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
-            return SysCategoryApiFp(configuration).apiSysCategoryDeletePost(body, options).then((request) => request(axios, basePath));
+        async apiSysOrgDeletePost(body?: DeleteOrgInput, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
+            return SysOrgApiFp(configuration).apiSysOrgDeletePost(body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary 获取分类列表 🔖
+         * @summary 获取机构列表 🔖
          * @param {number} id 主键Id
          * @param {string} [name] 名称
          * @param {string} [code] 编码
-         * @param {string} [type] 分类类型
+         * @param {string} [type] 机构类型
          * @param {number} [tenantId] 租户Id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSysCategoryListGet(id: number, name?: string, code?: string, type?: string, tenantId?: number, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultListSysCategory>> {
-            return SysCategoryApiFp(configuration).apiSysCategoryListGet(id, name, code, type, tenantId, options).then((request) => request(axios, basePath));
+        async apiSysOrgListGet(id: number, name?: string, code?: string, type?: string, tenantId?: number, options?: AxiosRequestConfig): Promise<AxiosResponse<AdminResultListSysOrg>> {
+            return SysOrgApiFp(configuration).apiSysOrgListGet(id, name, code, type, tenantId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary 更新分类 🔖
-         * @param {UpdateCategoryInput} [body] 
+         * @summary 更新机构 🔖
+         * @param {UpdateOrgInput} [body] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSysCategoryUpdatePost(body?: UpdateCategoryInput, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
-            return SysCategoryApiFp(configuration).apiSysCategoryUpdatePost(body, options).then((request) => request(axios, basePath));
+        async apiSysOrgUpdatePost(body?: UpdateOrgInput, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
+            return SysOrgApiFp(configuration).apiSysOrgUpdatePost(body, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * SysCategoryApi - object-oriented interface
+ * SysOrgApi - object-oriented interface
  * @export
- * @class SysCategoryApi
+ * @class SysOrgApi
  * @extends {BaseAPI}
  */
-export class SysCategoryApi extends BaseAPI {
+export class SysOrgApi extends BaseAPI {
     /**
      * 
-     * @summary 增加分类 🔖
-     * @param {AddCategoryInput} [body] 
+     * @summary 增加机构 🔖
+     * @param {AddOrgInput} [body] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof SysCategoryApi
+     * @memberof SysOrgApi
      */
-    public async apiSysCategoryAddPost(body?: AddCategoryInput, options?: AxiosRequestConfig) : Promise<AxiosResponse<AdminResultInt64>> {
-        return SysCategoryApiFp(this.configuration).apiSysCategoryAddPost(body, options).then((request) => request(this.axios, this.basePath));
+    public async apiSysOrgAddPost(body?: AddOrgInput, options?: AxiosRequestConfig) : Promise<AxiosResponse<AdminResultInt64>> {
+        return SysOrgApiFp(this.configuration).apiSysOrgAddPost(body, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
-     * @summary 删除分类 🔖
-     * @param {DeleteCategoryInput} [body] 
+     * @summary 删除机构 🔖
+     * @param {DeleteOrgInput} [body] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof SysCategoryApi
+     * @memberof SysOrgApi
      */
-    public async apiSysCategoryDeletePost(body?: DeleteCategoryInput, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
-        return SysCategoryApiFp(this.configuration).apiSysCategoryDeletePost(body, options).then((request) => request(this.axios, this.basePath));
+    public async apiSysOrgDeletePost(body?: DeleteOrgInput, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
+        return SysOrgApiFp(this.configuration).apiSysOrgDeletePost(body, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
-     * @summary 获取分类列表 🔖
+     * @summary 获取机构列表 🔖
      * @param {number} id 主键Id
      * @param {string} [name] 名称
      * @param {string} [code] 编码
-     * @param {string} [type] 分类类型
+     * @param {string} [type] 机构类型
      * @param {number} [tenantId] 租户Id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof SysCategoryApi
+     * @memberof SysOrgApi
      */
-    public async apiSysCategoryListGet(id: number, name?: string, code?: string, type?: string, tenantId?: number, options?: AxiosRequestConfig) : Promise<AxiosResponse<AdminResultListSysCategory>> {
-        return SysCategoryApiFp(this.configuration).apiSysCategoryListGet(id, name, code, type, tenantId, options).then((request) => request(this.axios, this.basePath));
+    public async apiSysOrgListGet(id: number, name?: string, code?: string, type?: string, tenantId?: number, options?: AxiosRequestConfig) : Promise<AxiosResponse<AdminResultListSysOrg>> {
+        return SysOrgApiFp(this.configuration).apiSysOrgListGet(id, name, code, type, tenantId, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
-     * @summary 更新分类 🔖
-     * @param {UpdateCategoryInput} [body] 
+     * @summary 更新机构 🔖
+     * @param {UpdateOrgInput} [body] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof SysCategoryApi
+     * @memberof SysOrgApi
      */
-    public async apiSysCategoryUpdatePost(body?: UpdateCategoryInput, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
-        return SysCategoryApiFp(this.configuration).apiSysCategoryUpdatePost(body, options).then((request) => request(this.axios, this.basePath));
+    public async apiSysOrgUpdatePost(body?: UpdateOrgInput, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
+        return SysOrgApiFp(this.configuration).apiSysOrgUpdatePost(body, options).then((request) => request(this.axios, this.basePath));
     }
 }

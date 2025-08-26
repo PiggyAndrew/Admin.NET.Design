@@ -60,4 +60,7 @@ export * from './apis/sys-wechat-api';
 export * from './apis/sys-wechat-pay-api';
 export * from './apis/sys-wechat-user-api';
 export * from './apis/sys-wx-open-api';
+export * from './apis/sys-category-api';
+
+
 
