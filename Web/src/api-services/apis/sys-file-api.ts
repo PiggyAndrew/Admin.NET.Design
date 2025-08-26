@@ -588,7 +588,7 @@ export const SysFileApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSysFileUploadFilePostForm: async (file?: Blob, fileType?: string, isPublic?: boolean, path?: string, savePath?: string, allowSuffix?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiSysFileUploadFilePostForm: async (file?: Blob, fileType?: string, isPublic?: boolean, path?: string, savePath?: string, allowSuffix?: string, categoryId?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/sysFile/uploadFile`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -633,6 +633,10 @@ export const SysFileApiAxiosParamCreator = function (configuration?: Configurati
 
             if (allowSuffix !== undefined) { 
                 localVarFormParams.append('AllowSuffix', allowSuffix as any);
+            }
+
+            if (categoryId !== undefined) { 
+                localVarFormParams.append('CategoryId', categoryId as any);
             }
 
             localVarHeaderParameter['Content-Type'] = 'multipart/form-data';

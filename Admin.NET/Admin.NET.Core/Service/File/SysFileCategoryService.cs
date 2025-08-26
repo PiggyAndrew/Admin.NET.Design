@@ -12,10 +12,14 @@ namespace Admin.NET.Core.Service;
 public class SysFileCategoryService : ITransient
 {
     private readonly SqlSugarRepository<SysFileCategory> _sysFileCategoryRep;
+    private readonly SqlSugarRepository<SysCategory> _sysCategoryRep;
 
-    public SysFileCategoryService(SqlSugarRepository<SysFileCategory> sysUserExtOrgRep)
+    public SysFileCategoryService(
+        SqlSugarRepository<SysFileCategory> sysFileCategoryRep,
+        SqlSugarRepository<SysCategory> sysCategoryRep)
     {
-        _sysFileCategoryRep = sysUserExtOrgRep;
+        _sysFileCategoryRep = sysFileCategoryRep;
+        _sysCategoryRep = sysCategoryRep;
     }
 
     /// <summary>
@@ -29,21 +33,57 @@ public class SysFileCategoryService : ITransient
     }
 
     /// <summary>
-    /// 更新用户扩展机构
+    /// 更新文件分类关联
     /// </summary>
     /// <param name="fileId"></param>
-    /// <param name="fileCategories"></param>
+    /// <param name="categoryId"></param>
     /// <returns></returns>
-    public async Task UpdateFileCategory(long fileId, List<SysFileCategory> fileCategories)
+    public async Task UpdateFileCategory(long fileId, long categoryId)
     {
+        // 删除该文件的所有分类关联
         await _sysFileCategoryRep.DeleteAsync(u => u.FileId == fileId);
 
-        if (fileCategories == null || fileCategories.Count < 1) return;
-        fileCategories.ForEach(u =>
+        // 如果categoryId为0或负数，表示不关联任何分类，直接返回
+        //if (categoryId <= 0) return;
+
+        // 获取分类及其所有祖先分类的ID列表
+        var categoryIdList = await GetCategoryAndAncestorIds(categoryId);
+
+        // 创建文件分类关联列表
+        var fileCategories = categoryIdList.Select(id => new SysFileCategory
         {
-            u.FileId = fileId;
-        });
+            FileId = fileId,
+            CategoryId = id
+        }).ToList();
+
+        // 批量插入关联关系
         await _sysFileCategoryRep.InsertRangeAsync(fileCategories);
+    }
+
+    /// <summary>
+    /// 递归获取分类及其所有祖先分类的ID列表
+    /// </summary>
+    /// <param name="categoryId"></param>
+    /// <returns></returns>
+    [NonAction]
+    public async Task<List<long>> GetCategoryAndAncestorIds(long categoryId)
+    {
+        var categoryIds = new List<long>();
+        var currentId = categoryId;
+
+        while (currentId > 0)
+        {
+            categoryIds.Add(currentId);
+
+            // 查找父分类
+            var category = await _sysCategoryRep.GetFirstAsync(u => u.Id == currentId);
+            if (category == null || category.Pid == 0)
+                break;
+
+            currentId = category.Pid;
+        }
+
+        return categoryIds;
     }
 
     /// <summary>

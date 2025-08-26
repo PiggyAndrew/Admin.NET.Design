@@ -21,6 +21,13 @@ import { Search } from './search';
  * @interface PageFileInput
  */
 export interface PageFileInput {
+	/**
+	 * 分类ID
+	 *
+	 * @type {number}
+	 * @memberof PageFileInput
+	 */
+	categoryId?: number;
 
     /**
      * @type {Search}

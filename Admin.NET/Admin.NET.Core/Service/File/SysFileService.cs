@@ -16,6 +16,7 @@ public class SysFileService : IDynamicApiController, ITransient
 {
     private readonly UserManager _userManager;
     private readonly SqlSugarRepository<SysFile> _sysFileRep;
+    private readonly SqlSugarRepository<SysCategory> _sysCategoryRep;
     private readonly SysFileCategoryService _sysFileCategoryService;
     private readonly OSSProviderOptions _OSSProviderOptions;
     private readonly UploadOptions _uploadOptions;
@@ -27,11 +28,13 @@ public class SysFileService : IDynamicApiController, ITransient
         SqlSugarRepository<SysFile> sysFileRep,
         SysFileCategoryService sysFileCategoryService,
         IOptions<OSSProviderOptions> oSSProviderOptions,
+        SqlSugarRepository<SysCategory> sysCategoryRep,
         IOptions<UploadOptions> uploadOptions, INamedServiceProvider<ICustomFileProvider> namedServiceProvider)
     {
         _namedServiceProvider = namedServiceProvider;
         _userManager = userManager;
         _sysFileRep = sysFileRep;
+        _sysCategoryRep = sysCategoryRep;
         _sysFileCategoryService = sysFileCategoryService;
         _OSSProviderOptions = oSSProviderOptions.Value;
         _uploadOptions = uploadOptions.Value;
@@ -61,15 +64,25 @@ public class SysFileService : IDynamicApiController, ITransient
         var publicList = _sysFileRep.AsQueryable().ClearFilter().Where(u => u.IsPublic == true);
         // 获取私有附件
         var privateList = _sysFileRep.AsQueryable().Where(u => u.IsPublic == false);
-        // 合并公开和私有附件并分页
+       var categories = await _sysCategoryRep.AsQueryable()
+        .ToChildListAsync(u => u.Pid, input.CategoryId, false);
+        var categoryIds = categories.Select(x => x.Id);
+        categoryIds=categoryIds.Append(input.CategoryId);
+        // 合并公开和私有附件
         return await _sysFileRep.Context.UnionAll(publicList, privateList)
-            .WhereIF(!string.IsNullOrWhiteSpace(input.FileName), u => u.FileName.Contains(input.FileName.Trim()))
-            .WhereIF(!string.IsNullOrWhiteSpace(input.FilePath), u => u.FilePath.Contains(input.FilePath.Trim()))
-            .WhereIF(!string.IsNullOrWhiteSpace(input.StartTime.ToString()) && !string.IsNullOrWhiteSpace(input.EndTime.ToString()),
-                u => u.CreateTime >= input.StartTime && u.CreateTime <= input.EndTime)
-            .OrderBy(u => u.CreateTime, OrderByType.Desc)
-            .ToPagedListAsync(input.Page, input.PageSize);
+        .WhereIF(!string.IsNullOrWhiteSpace(input.FileName), u => u.FileName.Contains(input.FileName.Trim()))
+        .WhereIF(!string.IsNullOrWhiteSpace(input.FilePath), u => u.FilePath.Contains(input.FilePath.Trim()))
+        .WhereIF(!string.IsNullOrWhiteSpace(input.StartTime.ToString()) && !string.IsNullOrWhiteSpace(input.EndTime.ToString()),
+            u => u.CreateTime >= input.StartTime && u.CreateTime <= input.EndTime)
+        .WhereIF(categoryIds != null&& categoryIds.Any(), u=> categoryIds.Contains(u.CategoryId))
+         .AdvancedFilter(input.Filter)  // 添加Filter对象支持
+        .OrderBuilder(input)           // 添加排序支持
+        .ToPagedListAsync(input.Page, input.PageSize);
     }
+
+
+
+
 
     /// <summary>
     /// 上传文件Base64 🔖
@@ -291,9 +304,9 @@ public class SysFileService : IDynamicApiController, ITransient
         newFile.SizeKb = sizeKb;
         newFile.FilePath = path;
         newFile.FileMd5 = fileMd5;
-
+        newFile.CategoryId = input.CategoryId;
         var finalName = newFile.Id + suffix; // 文件最终名称
-       
+
         newFile = await _customFileProvider.UploadFileAsync(input.File, newFile, path, finalName);
         await _sysFileRep.AsInsertable(newFile).ExecuteCommandAsync();
 
@@ -310,7 +323,7 @@ public class SysFileService : IDynamicApiController, ITransient
     /// <returns></returns>
     private async Task UpdateFileCategory(UploadFileInput input)
     {
-        await _sysFileCategoryService.UpdateFileCategory(input.Id, input.Categories);
+        await _sysFileCategoryService.UpdateFileCategory(input.Id, input.CategoryId);
     }
 
     /// <summary>

@@ -124,8 +124,9 @@ public class SysCategoryService : IDynamicApiController, ITransient
             if (pOrg != null)
                 DeleteAllUserOrgCache(pOrg.Id, pOrg.Pid);
         }
-
-        var newCateogory = await _sysCategoryRep.AsInsertable(input.Adapt<SysCategory>()).ExecuteReturnEntityAsync();
+        var category = input.Adapt<SysCategory>();
+        category.Id = YitIdHelper.NextId();
+        var newCateogory = await _sysCategoryRep.AsInsertable(category).ExecuteReturnEntityAsync();
         return newCateogory.Id;
     }
 

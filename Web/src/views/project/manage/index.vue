@@ -72,8 +72,7 @@
 						</el-table-column>
 						<el-table-column prop="relationName" label="关联分类" width="120" align="center" show-overflow-tooltip>
 							<template #default="scope">
-								<el-tag v-if="scope.row.relationName === 'category'" type="primary">{{ getCategoryName(scope.row.relationId) }}</el-tag>
-								<span v-else>-</span>
+								<el-tag type="primary">{{ getCategoryName(scope.row.categoryId) }}</el-tag>
 							</template>
 						</el-table-column>
 						<el-table-column prop="createTime" label="上传时间" width="160" align="center" show-overflow-tooltip />
@@ -294,14 +293,9 @@ const handleQuery = async () => {
 			suffix: state.queryParams.suffix,
 			startTime: state.queryParams.startTime,
 			endTime: state.queryParams.endTime,
+			categoryId: state.queryParams.categoryId,
 		};
-		
-		// 如果选中了分类，添加分类筛选条件
-		if (state.queryParams.categoryId) {
-			// 通过relationId和relationName筛选属于指定分类的文件
-			params.filter = `relationId eq ${state.queryParams.categoryId} and relationName eq 'category'`;
-		}
-		
+		console.log(params)
 		const res = await getAPI(SysFileApi).apiSysFilePagePost(params);
 		state.fileData = res.data.result?.items ?? [];
 		state.tableParams.total = res.data.result?.total ?? 0;
@@ -327,6 +321,7 @@ const resetQuery = () => {
 // 树组件点击
 const nodeClick = async (node: any) => {
 	state.queryParams.categoryId = node.id;
+	console.log(node.id)
 	state.uploadForm.categoryId = node.id; // 设置上传时的分类ID
 	state.tableParams.page = 1;
 	handleQuery();
@@ -368,7 +363,10 @@ const uploadFile = async () => {
 			await getAPI(SysFileApi).apiSysFileUploadFilePostForm(
 				fileItem.raw, 
 				state.uploadForm.fileType, 
-				state.uploadForm.isPublic, 
+				state.uploadForm.isPublic,
+				undefined,
+				undefined,
+				undefined,
 				state.uploadForm.categoryId // 传递分类ID
 			);
 			
@@ -408,6 +406,7 @@ const getCategoryName = (categoryId: number | undefined): string => {
 		}
 		return '-';
 	};
+	console.log(state.categoryTreeData,categoryId)
 	return findCategory(state.categoryTreeData, categoryId);
 };
 

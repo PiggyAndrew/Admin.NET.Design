@@ -21,6 +21,8 @@ public class PageFileInput : BasePageInput
     /// </summary>
     public string FilePath { get; set; }
 
+    public long CategoryId { get; set; }
+
     /// <summary>
     /// 文件后缀
     /// </summary>
@@ -83,7 +85,7 @@ public class UploadFileInput
     /// </summary>
     public string AllowSuffix { get; set; }
 
-    public List<SysFileCategory> Categories { get; set; }
+    public long CategoryId { get; set; }
 }
 
 /// <summary>

@@ -117,4 +117,12 @@ public partial class SysFile : EntityBaseTenantOrg
     [SugarColumn(ColumnDescription = "文件版本")]
     [MaxLength(128)]
     public string VersionNumber { get; set; } = "1.0.0";
+
+
+    /// <summary>
+    /// 文件版本
+    /// </summary>
+    [SugarColumn(ColumnDescription = "分类")]
+    [MaxLength(128)]
+    public long CategoryId { get; set; }
 }
