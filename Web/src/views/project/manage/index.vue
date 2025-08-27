@@ -79,9 +79,10 @@
 						<el-table-column label="操作" width="320" fixed="right" align="center" show-overflow-tooltip>
 							<template #default="scope">
 								<el-button-group>
+
+									<el-button icon="ele-Edit" size="small" type="primary" @click="openEditDialog(scope.row)" v-auth="'sysFile:update'">编辑</el-button>
 									<el-button icon="ele-View" size="small" type="primary" @click="openFilePreviewDialog(scope.row)" v-auth="'sysFile:detail'">预览</el-button>
 									<el-button icon="ele-Download" size="small" type="primary" @click="downloadFile(scope.row)" v-auth="'sysFile:downloadFile'">下载</el-button>
-									<el-button icon="ele-Edit" size="small" type="warning" @click="editFileCategory(scope.row)" v-auth="'sysFile:update'">分类</el-button>
 									<el-button icon="ele-Delete" size="small" type="danger" @click="delFile(scope.row)" v-auth="'sysFile:delete'">删除</el-button>
 								</el-button-group>
 							</template>
@@ -268,6 +269,14 @@ const state = reactive({
 	previewList: [] as string[],
 });
 
+// 打开编辑对话框
+const openEditDialog = (file: SysFile) => {
+	state.editFileForm.id = file.id || 0;
+	state.editFileForm.fileName = `${file.fileName}${file.suffix}`;
+	state.editFileForm.categoryId = file.categoryId; // 假设relationId存储分类ID
+	state.editCategoryDialogVisible = true;
+};
+
 onMounted(async () => {
 	await loadCategoryTree();
 	handleQuery();
@@ -453,13 +462,6 @@ const downloadFile = async (file: SysFile) => {
 	}
 };
 
-// 编辑文件分类
-const editFileCategory = (file: SysFile) => {
-	state.editFileForm.id = file.id || 0;
-	state.editFileForm.fileName = `${file.fileName}${file.suffix}`;
-	state.editFileForm.categoryId = file.relationId; // 假设relationId存储分类ID
-	state.editCategoryDialogVisible = true;
-};
 
 // 保存文件分类
 const saveFileCategory = async () => {

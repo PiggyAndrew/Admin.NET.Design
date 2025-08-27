@@ -21,6 +21,13 @@
 export interface SysFile {
 
     /**
+     * 分类Id
+     *
+     * @type {number}
+     * @memberof SysFile
+     */
+    categoryId?: number;
+    /**
      * 雪花Id
      *
      * @type {number}

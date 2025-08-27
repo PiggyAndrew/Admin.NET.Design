@@ -77,15 +77,15 @@ public class SysCategoryService : IDynamicApiController, ITransient
     /// <summary>
     /// 递归禁用没权限的机构
     /// </summary>
-    /// <param name="orgTree"></param>
-    /// <param name="userOrgIdList"></param>
-    private static void HandlerCategoryTree(List<SysCategory> orgTree, List<long> userOrgIdList)
+    /// <param name="categoryTree"></param>
+    /// <param name="fileCategoryIdList"></param>
+    private static void HandlerCategoryTree(List<SysCategory> categoryTree, List<long> fileCategoryIdList)
     {
-        foreach (var org in orgTree)
+        foreach (var category in categoryTree)
         {
-            org.Disabled = !userOrgIdList.Contains(org.Id); // 设置禁用/不可选择
-            if (org.Children != null)
-                HandlerCategoryTree(org.Children, userOrgIdList);
+            category.Disabled = !fileCategoryIdList.Contains(category.Id); // 设置禁用/不可选择
+            if (category.Children != null)
+                HandlerCategoryTree(category.Children, fileCategoryIdList);
         }
     }
 
