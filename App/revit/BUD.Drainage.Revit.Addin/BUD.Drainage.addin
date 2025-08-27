@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>BUD Sustainable Building Designer Verison 1.0.0</Name>
+		<Assembly>BUD\BUD.Drainage.Revit.Addin.dll</Assembly>
+		<ClientId>31B1D5F3-AF49-442D-8689-5DF9B2F088E6</ClientId>
+		<FullClassName>BUD.Drainage.Revit.Addin.App</FullClassName>
+		<VendorId>Vircon</VendorId>
+		<VendorDescription>Vircon.hk</VendorDescription>
+		<Author>shichuyibushishiwu.github.io</Author>
+	</AddIn>
+</RevitAddIns>

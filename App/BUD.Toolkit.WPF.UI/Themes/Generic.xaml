@@ -1,0 +1,32 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:DSD.Toolkit.WPF.UI">
+
+
+    <FontFamily x:Key="IconFontFamily">pack://application:,,,/DSD.Toolkit.WPF.UI;component/Assets/#iconfont</FontFamily>
+
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/themes/constants.xaml" />
+
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/styles/button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/styles/textbox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/styles/tabcontrol.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/styles/listbox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/styles/scrollviewer.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/styles/window.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/styles/datagrid.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/styles/combobox.xaml" />
+
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/controls/icon/icon.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/DSD.Toolkit.WPF.UI;component/controls/scrollviewer/scrollviewer.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+
+
+
+
+
+
+</ResourceDictionary>

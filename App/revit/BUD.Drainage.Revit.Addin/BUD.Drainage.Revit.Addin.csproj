@@ -1,0 +1,88 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<StartAction>Program</StartAction>
+		<StartProgram>D:\Program Files\Autodesk\Revit 2022\Revit.exe</StartProgram>
+		<XamlDebuggingInformation>True</XamlDebuggingInformation>
+		<GenerateResourceUsePreserializedResources>False</GenerateResourceUsePreserializedResources>
+		<LangVersion>preview</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration.StartsWith(Rvt_22))'">
+		<RvtVersion>2022</RvtVersion>
+		<StartProgram>D:\Program Files\Autodesk\Revit 2022\Revit.exe</StartProgram>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Assets\images\**" />
+	  <EmbeddedResource Remove="Assets\images\**" />
+	  <None Remove="Assets\images\**" />
+	  <Page Remove="Assets\images\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\icon\check.png" />
+	  <None Remove="Assets\icon\mass.png" />
+	  <None Remove="Assets\Manhole Type E.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+	  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.0" />
+	  <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	  <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3124.44" />
+		<PackageReference Include="Milvus.Client" Version="2.3.0-preview.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\BUD.Data.Serialization\BUD.Data.Serialization.csproj" />
+		<ProjectReference Include="..\..\BUD.Reinforcement.Engine\BUD.Reinforcement.Engine.csproj" />
+		<ProjectReference Include="..\..\BUD.Toolkit.Logger\BUD.Toolkit.Logger.csproj" />
+		<ProjectReference Include="..\..\BUD.Toolkit.MVVM\BUD.Toolkit.MVVM.csproj" />
+		<ProjectReference Include="..\..\BUD.Toolkit.WPF.UI\BUD.Toolkit.WPF.UI.csproj" />
+		<ProjectReference Include="..\BUD.Revit.Framework\BUD.Revit.Framework.csproj" />
+		<ProjectReference Include="..\BUD.Tuna.Revit.Extensions\BUD.Tuna.Revit.Extensions.csproj" />
+		<!--<ProjectReference Include="..\BUD.Revit.Framework\BUD.Revit.Framework.csproj" />-->
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="System.ComponentModel.DataAnnotations" />
+	  <Reference Include="System.Net.Http" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Assets\icon\check.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\icon\mass.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Manhole Type E.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="ViewModels\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\ChatbotPage.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	</ItemGroup>
+
+	<Target Name="CopyApplication" BeforeTargets="PostBuildEvent" Condition="'$(Configuration.Contains(Debug))' And '$(StartAction)'=='Program'">
+		<ItemGroup>
+			<SourceFiles Include="$(ProjectDir)$(OutDir)\**\*.*"></SourceFiles>
+			<Assets Include="..\..\..\assets\revit\**\*.*"></Assets>
+		</ItemGroup>
+		<Copy SourceFiles="$(ProjectDir)\BUD.Drainage.addin" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\$(RvtVersion)"></Copy>
+
+		<Copy SourceFiles="@(SourceFiles)" DestinationFiles="@(SourceFiles->'C:\ProgramData\Autodesk\Revit\Addins\$(RvtVersion)\BUD\%(RecursiveDir)%(Filename)%(Extension)')"></Copy>
+		<Copy SourceFiles="@(Assets)" DestinationFiles="@(Assets->'C:\ProgramData\Autodesk\Revit\Addins\$(RvtVersion)\BUD\assets\%(RecursiveDir)%(Filename)%(Extension)')"></Copy>
+	</Target>
+
+	<Target Name="CleanApplication" AfterTargets="Clean">
+		<RemoveDir Directories="C:\ProgramData\Autodesk\Revit\Addins\$(RvtVersion)\BUD"></RemoveDir>
+		<Delete Files="C:\ProgramData\Autodesk\Revit\Addins\$(RvtVersion)\BUD.Drainage.addin" />
+	</Target>
+</Project>

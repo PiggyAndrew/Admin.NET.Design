@@ -50,7 +50,7 @@
 						<el-table-column prop="bucketName" label="存储桶" width="100" align="center" show-overflow-tooltip />
 						<el-table-column prop="createTime" label="上传时间" width="160" align="center" show-overflow-tooltip>
 							<template #default="scope">
-								{{ formatTime(scope.row.createTime) }}
+								<!-- {{ formatTime(scope.row.createTime) }} -->
 							</template>
 						</el-table-column>
 						<el-table-column label="操作" width="280" fixed="right" align="center" show-overflow-tooltip>
@@ -131,7 +131,6 @@ import { getAPI } from '/@/utils/axios-utils';
 import { SysCategoryApi, SysFileApi } from '/@/api-services/api';
 import { SysCategory, SysFile, PageFileInput, DeleteFileInput } from '/@/api-services/models';
 import CategoryTree from '/@/views/category/component/categoryTree.vue';
-import { formatTime } from '/@/utils/formatTime';
 import { Session } from '/@/utils/storage';
 import { Document } from '@element-plus/icons-vue';
 

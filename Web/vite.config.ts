@@ -54,7 +54,8 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 		],
 		root: process.cwd(),
 		resolve: { alias },
-		base: mode.command === 'serve' ? './' : env.VITE_PUBLIC_PATH,
+		// 修改base配置，确保始终使用相对路径
+		base: './',
 		optimizeDeps: { exclude: ['vue-demi'] },
 		server: {
 			host: '0.0.0.0',
@@ -71,21 +72,22 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 		build: {
 			outDir: 'dist',
 			chunkSizeWarningLimit: 1500,
-			assetsInlineLimit: 5000, // 小于此阈值的导入或引用资源将内联为 base64 编码
-			sourcemap: false, // 构建后是否生成 source map 文件
-			extractComments: false, // 移除注释
-			minify: 'terser', // 启用后 terserOptions 配置才有效
+			assetsInlineLimit: 5000,
+			sourcemap: false,
+			extractComments: false,
+			minify: 'terser',
 			terserOptions: {
 				compress: {
-					drop_console: true, // 生产环境时移除console
+					drop_console: true,
 					drop_debugger: true,
 				},
 			},
 			rollupOptions: {
 				output: {
-					chunkFileNames: 'assets/js/[name]-[hash].js', // 引入文件名的名称
-					entryFileNames: 'assets/js/[name]-[hash].js', // 包的入口文件名称
-					assetFileNames: 'assets/[ext]/[name]-[hash].[ext]', // 资源文件像 字体，图片等
+					// 确保所有资源使用相对路径
+					chunkFileNames: 'assets/js/[name]-[hash].js',
+					entryFileNames: 'assets/js/[name]-[hash].js',
+					assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
 					manualChunks(id) {
 						if (id.includes('node_modules')) {
 							return id.toString().match(/\/node_modules\/(?!.pnpm)(?<moduleName>[^\/]*)\//)?.groups!.moduleName ?? 'vender';
