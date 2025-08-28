@@ -1,0 +1,36 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DSD.Reinforcement.Engine.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FactorOfDeadLoad" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1.35</Value>
+    </Setting>
+    <Setting Name="VolumetricWeightOfWater" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">9.8</Value>
+    </Setting>
+    <Setting Name="VolumetricWeightOfSoil" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">25</Value>
+    </Setting>
+    <Setting Name="Surcharge" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="MinSteelRatio" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.13</Value>
+    </Setting>
+    <Setting Name="MaxSteelRatio" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">4</Value>
+    </Setting>
+    <Setting Name="AnagleOfResistance" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="FactorOfImposedLoad" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1.5</Value>
+    </Setting>
+    <Setting Name="FactorOfLiveLoad" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1.5</Value>
+    </Setting>
+    <Setting Name="SaturatedDensityForFillingMaterials" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">19</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

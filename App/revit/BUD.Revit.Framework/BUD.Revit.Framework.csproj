@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\..\BUD.Toolkit.Logger\BUD.Toolkit.Logger.csproj" />
+	  <ProjectReference Include="..\..\BUD.Toolkit.MVVM\BUD.Toolkit.MVVM.csproj" />
+	  <ProjectReference Include="..\BUD.Tuna.Revit.Extensions\BUD.Tuna.Revit.Extensions.csproj" />
+	</ItemGroup>
+
+</Project>
